@@ -51,7 +51,7 @@ jobs:
 
       - name: Upstreaming dashboard
         if: github.ref == 'refs/heads/master'
-        uses: leanprover-community/upstreaming-dashboard-action/blob/main/action.yml@main
+        uses: leanprover-community/upstreaming-dashboard-action@main
         with:
           website-directory: ./website
           project-name: LeanCamCombi
