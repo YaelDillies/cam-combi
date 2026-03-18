@@ -51,9 +51,10 @@ jobs:
 
       - name: Upstreaming dashboard
         if: github.ref == 'refs/heads/master'
-        run: |
-          mkdir -p website/_includes
-          python3 scripts/upstreaming_dashboard.py
+        uses: leanprover-community/upstreaming-dashboard-action/blob/main/action.yml@main
+        with:
+          website-directory: ./website/_includes
+          project-name: LeanCamCombi
 
       - name: File dependencies
         if: github.ref == 'refs/heads/master'
