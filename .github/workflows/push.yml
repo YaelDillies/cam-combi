@@ -55,6 +55,8 @@ jobs:
         with:
           website-directory: ./website
           project-name: LeanCamCombi
+          include-drafts: true
+          branch-name: master
 
       - name: File dependencies
         if: github.ref == 'refs/heads/master'
