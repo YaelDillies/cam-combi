@@ -53,7 +53,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: leanprover-community/upstreaming-dashboard-action/blob/main/action.yml@main
         with:
-          website-directory: ./website/_includes
+          website-directory: ./website
           project-name: LeanCamCombi
 
       - name: File dependencies
