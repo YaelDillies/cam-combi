@@ -26,14 +26,13 @@ lemma pi {ι : Type*} {G : ι → Type*} [Fintype ι] [∀ i, Group (G i)] {A : 
     · calc
         #(Fintype.piFinset F) = ∏ i, (#(F i) : ℝ) := by simp
         _ ≤ ∏ i, K i := by gcongr; exact hF _
-    · simp_rw [pow_two]
+    · rw [Set.subset_def]
+      simp_rw [pow_two, Set.mem_mul, Set.mem_univ_pi]
       rintro _ ⟨x, hx, y, hy, rfl⟩
-      have hxA : ∀ i, x i ∈ A i := by simpa [Set.mem_univ_pi] using hx
-      have hyA : ∀ i, y i ∈ A i := by simpa [Set.mem_univ_pi] using hy
       have hxycoord : ∀ i, x i * y i ∈ (F i : Set (G i)) • A i := by
         intro i
         refine hFS i <| by
-          have hxy : x i * y i ∈ A i * A i := ⟨x i, hxA i, y i, hyA i, rfl⟩
+          have hxy : x i * y i ∈ A i * A i := ⟨x i, hx i, y i, hy i, rfl⟩
           simpa [pow_two] using hxy
       choose f hfF a ha hfa using fun i ↦ Set.mem_smul.mp (hxycoord i)
       refine Set.mem_smul.mpr ?_
