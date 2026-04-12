@@ -26,7 +26,23 @@ lemma pi {ι : Type*} {G : ι → Type*} [Fintype ι] [∀ i, Group (G i)] {A : 
     · calc
         #(Fintype.piFinset F) = ∏ i, (#(F i) : ℝ) := by simp
         _ ≤ ∏ i, K i := by gcongr; exact hF _
-    · sorry
+    · intro x hx
+      rw [pow_two, Set.mem_mul] at hx
+      rcases hx with ⟨y, hy, z, hz, rfl⟩
+      have hyA : ∀ i, y i ∈ A i := by simpa [Set.mem_univ_pi] using hy
+      have hzA : ∀ i, z i ∈ A i := by simpa [Set.mem_univ_pi] using hz
+      have hxcoord : ∀ i, y i * z i ∈ (F i : Set (G i)) • A i := by
+        intro i
+        refine hFS i <| by
+          have hyz : y i * z i ∈ A i * A i := ⟨y i, hyA i, z i, hzA i, rfl⟩
+          simpa [pow_two] using hyz
+      choose f hfF a ha hfa using fun i ↦ Set.mem_smul.mp (hxcoord i)
+      refine Set.mem_smul.mpr ?_
+      refine ⟨f, ?_, a, ?_, ?_⟩
+      · simpa [Fintype.mem_piFinset] using hfF
+      · simpa [Set.mem_univ_pi] using ha
+      · ext i
+        simpa [Pi.smul_apply, smul_eq_mul] using hfa i
 
 end IsApproximateSubgroup
 
