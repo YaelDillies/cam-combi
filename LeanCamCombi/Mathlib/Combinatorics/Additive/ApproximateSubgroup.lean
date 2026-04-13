@@ -29,18 +29,11 @@ lemma pi {ι : Type*} {G : ι → Type*} [Fintype ι] [∀ i, Group (G i)] {A : 
     · rw [Set.subset_def]
       simp_rw [pow_two, Set.mem_mul, Set.mem_univ_pi]
       rintro _ ⟨x, hx, y, hy, rfl⟩
-      have hxycoord : ∀ i, x i * y i ∈ (F i : Set (G i)) • A i := by
-        intro i
-        refine hFS i <| by
-          have hxy : x i * y i ∈ A i * A i := ⟨x i, hx i, y i, hy i, rfl⟩
-          simpa [pow_two] using hxy
-      choose f hfF a ha hfa using fun i ↦ Set.mem_smul.mp (hxycoord i)
-      refine Set.mem_smul.mpr ?_
-      refine ⟨f, ?_, a, ?_, ?_⟩
-      · simpa [Fintype.mem_piFinset] using hfF
-      · simpa [Set.mem_univ_pi] using ha
-      · ext i
-        simpa [Pi.smul_apply, smul_eq_mul] using hfa i
+      choose f hfF a ha hfa using fun i ↦ hFS i <| by
+        simpa [pow_two] using Set.mul_mem_mul (hx i) (hy i)
+      refine ⟨f, by simpa using hfF, a, by simpa using ha, ?_⟩
+      ext i
+      simpa [Pi.smul_apply, smul_eq_mul] using hfa i
 
 end IsApproximateSubgroup
 
