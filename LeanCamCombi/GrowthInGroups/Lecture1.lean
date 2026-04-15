@@ -3,13 +3,15 @@ Copyright (c) 2024 Yaël Dillies. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies
 -/
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Combinatorics.Additive.DoublingConst
-import Mathlib.Combinatorics.Additive.VerySmallDoubling
-import Mathlib.Geometry.Group.Growth.LinearLowerBound
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-import LeanCamCombi.Util
+module
+
+public import LeanCamCombi.Util
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Combinatorics.Additive.DoublingConst
+public import Mathlib.Combinatorics.Additive.VerySmallDoubling
+public import Mathlib.Geometry.Group.Growth.LinearLowerBound
+public import Mathlib.GroupTheory.Nilpotent
+public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 
 /-!
 # Growth in Groups - Lecture 1
@@ -21,6 +23,8 @@ course Growth in Groups lectured by Simon Machado in autumn/winter 2024.
 
 [Lecture notes by Simon Machado](https://sites.google.com/view/simonmachado/teaching)
 -/
+
+public section
 
 open Finset Fintype Group MulOpposite Real
 open scoped Combinatorics.Additive MatrixGroups Pointwise
@@ -44,7 +48,8 @@ def HasPolynomialGrowth : Prop :=
 /-- **Gromov's theorem**.
 
 A group has polynomial growth iff it's virtually nilpotent. -/
-lemma theorem_1_2 : HasPolynomialGrowth G ↔ IsVirtuallyNilpotent G := showcased
+@[nolint unusedArguments]
+lemma theorem_1_2 [Group.FG G] : HasPolynomialGrowth G ↔ IsVirtuallyNilpotent G := showcased
 
 lemma fact_1_3 [Fintype G] (hn : X ^ n = univ) : log (card G) / log #X ≤ n := by
   obtain rfl | hX := X.eq_empty_or_nonempty
@@ -70,11 +75,11 @@ open scoped Classical in
 /-- An auxiliary lemma used in the proof of the collar theorem. -/
 lemma proposition_1_7 :
     ∃ ε > 0, ∀ X : Finset SL(2, ℝ), #(X ^ 2) ≤ 1000 * #X → (∀ M ∈ X, ∀ i j, |M i j| ≤ ε) →
-      ∃ A : Subgroup SL(2, ℝ), A.IsCommutative ∧
+      ∃ A : Subgroup SL(2, ℝ), IsMulCommutative A ∧
         ∃ a : Fin 10000000 → SL(2, ℝ), (X : Set SL(2, ℝ)) ⊆ ⋃ i, a i • A := showcased
 
 /-- The **Breuillard-Green-Tao theorem**. -/
-lemma theorem_1_8 (_hK : 0 ≤ K) :
+lemma theorem_1_8 :
     ∃ C > 0, ∀ {G} [Group G] [DecidableEq G] (A : Finset G) (_hA : σₘ[A] ≤ K),
       ∃ (N : Subgroup G) (D : Subgroup N) (_hD : D.Normal),
         upperCentralSeries (N⧸ D) C = ⊤ ∧ ((↑) '' (D : Set N) : Set G) ⊆ (A / A) ^ 4 ∧

@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Defs
-import LeanCamCombi.StableCombi.Rel
+module
+
+public import LeanCamCombi.StableCombi.Rel
+public import Mathlib.Data.Set.Defs
+
+@[expose] public section
 
 variable {G : Type*} [Group G] {n : ℕ} {A : Set G}
 

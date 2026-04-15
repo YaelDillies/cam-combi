@@ -3,6 +3,7 @@ Copyright (c) 2024 Yaël Dillies. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies
 -/
+module
 
 /-!
 # Utilities for course statements
@@ -10,6 +11,8 @@ Authors: Yaël Dillies
 Sometimes a course states a result much earlier than it proves it, or states a theorem that won't be
 proved in the course.
 -/
+
+public section
 
 /-- This theorem is proved later in this course. -/
 axiom proved_later {P : Prop} : P

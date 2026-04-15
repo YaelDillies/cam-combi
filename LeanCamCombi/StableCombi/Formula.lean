@@ -1,5 +1,9 @@
-import Mathlib.ModelTheory.Semantics
-import LeanCamCombi.StableCombi.Rel
+module
+
+public import LeanCamCombi.StableCombi.Rel
+public import Mathlib.ModelTheory.Semantics
+
+@[expose] public section
 
 namespace FirstOrder.Language
 variable {L : Language}

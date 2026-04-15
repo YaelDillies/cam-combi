@@ -3,11 +3,13 @@ Copyright (c) 2022 Yaël Dillies, Kexing Ying. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Kexing Ying
 -/
-import Mathlib.Combinatorics.Hall.Basic
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
-import Mathlib.Combinatorics.SimpleGraph.Clique
-import Mathlib.Data.Real.Sqrt
-import Mathlib.SetTheory.Cardinal.Basic
+module
+
+public import Mathlib.Combinatorics.Hall.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import Mathlib.Data.Real.Sqrt
+public import Mathlib.SetTheory.Cardinal.Basic
 
 /-!
 # Graph Theory, example sheet 1
@@ -18,9 +20,11 @@ of the Cambridge Part II course Graph Theory.
 If you solve a question in Lean, feel free to open a Pull Request on Github!
 -/
 
+public section
+
 open Fintype (card)
 open Function SimpleGraph
-open scoped BigOperators Cardinal
+open scoped Cardinal SetRel
 
 namespace GraphTheory
 namespace ES1
@@ -76,11 +80,15 @@ Show that if $$G$$ is acyclic and $$|G| ≥ 1$$, then $$e(G) ≤ n − 1$$.
 -/
 
 -- Note: The statement is true without `nonempty α` due to nat subtraction.
-lemma q5 [Fintype α] [DecidableEq α] (G : SimpleGraph α) [DecidableRel G.Adj] (hG : G.IsAcyclic) :
+lemma q5 [Fintype α] (G : SimpleGraph α) [DecidableRel G.Adj] (hG : G.IsAcyclic) :
     G.edgeFinset.card ≤ card α - 1 := by
   cases isEmpty_or_nonempty α
-  · simp
-  sorry
+  · simp [Subsingleton.elim G ⊥]
+  · classical
+    obtain ⟨T, hGT, -, hT⟩ := connected_top.exists_isTree_le_of_le_of_isAcyclic le_top hG
+    have h1 := Finset.card_le_card (edgeFinset_subset_edgeFinset.mpr hGT)
+    have h2 := hT.card_edgeFinset
+    lia
 
 /-!
 ### Question 6
@@ -153,7 +161,7 @@ Show that the possible clique numbers for a regular graph on $$n$$ vertices are
 $$1, 2, \dots, n/2$$ and $$n$$.
 -/
 
-lemma q10 [Fintype α] [DecidableEq α] (n : ℕ) :
+lemma q10 [Fintype α] (n : ℕ) :
     (∃ (G : SimpleGraph α) (_ : DecidableRel G.Adj) (k : _),
         G.IsRegularOfDegree k ∧ cliqueNum G = n) ↔
       n ≤ card α / 2 ∨ n = card α :=
@@ -208,19 +216,19 @@ all degrees of $$X$$ are finite (while degrees in $$Y$$ have no restriction)?
 
 -- This translation looks slightly painful because of the `cardinal`.
 lemma q14_part1 :
-    ∃ r : ℕ → ℕ → Prop,
-      (∀ A : Finset ℕ, (A.card : Cardinal) ≤ #(Rel.image r A)) ∧
-        ∀ f : ℕ → ℕ, Injective f → ∃ n, ¬ r n (f n) :=
+    ∃ r : SetRel ℕ ℕ,
+      (∀ A : Finset ℕ, (A.card : Cardinal) ≤ #(r.image A)) ∧
+        ∀ f : ℕ → ℕ, Injective f → ∃ n, ¬ n ~[r] f n :=
   sorry
 
-lemma q14_part2 [DecidableEq β] [Countable α] [Countable β] (r : α → β → Prop)
-    [∀ a, Fintype (Rel.image r {a})] (hr : ∀ A : Finset α, A.card ≤ card (Rel.image r A)) :
-    ∃ f : α → β, Injective f ∧ ∀ a, r a (f a) :=
+lemma q14_part2 [DecidableEq β] [Countable α] [Countable β] (r : SetRel α β)
+    [∀ a, Fintype (r.image {a})] (hr : ∀ A : Finset α, A.card ≤ card (r.image A)) :
+    ∃ f : α → β, Injective f ∧ ∀ a, a ~[r] f a :=
   sorry
 
-lemma q14_part3 [DecidableEq β] (r : α → β → Prop) [∀ a, Fintype (Rel.image r {a})]
-    (hr : ∀ A : Finset α, A.card ≤ card (Rel.image r A)) :
-    ∃ f : α → β, Injective f ∧ ∀ a, r a (f a) :=
+lemma q14_part3 [DecidableEq β] (r : SetRel α β) [∀ a, Fintype (r.image {a})]
+    (hr : ∀ A : Finset α, A.card ≤ card (r.image A)) :
+    ∃ f : α → β, Injective f ∧ ∀ a, a ~[r] f a :=
   sorry
 
 /-!

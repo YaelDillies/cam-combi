@@ -1,4 +1,6 @@
-import Mathlib.Combinatorics.SetFamily.LYM
+module
+
+public import Mathlib.Combinatorics.SetFamily.LYM
 
 /-!
 # TODO
@@ -6,3 +8,5 @@ import Mathlib.Combinatorics.SetFamily.LYM
 * Use semantic naming convention instead of symbol-reading
 * Add the `∑ s ∈ 𝒜, ((card α).choose #s)⁻¹ ≤ 1` variant
 -/
+
+public section

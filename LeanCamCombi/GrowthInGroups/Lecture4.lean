@@ -1,8 +1,12 @@
-import Mathlib.Analysis.Matrix
-import Mathlib.GroupTheory.Nilpotent
-import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-import LeanCamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
-import LeanCamCombi.Util
+module
+
+public import LeanCamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
+public import LeanCamCombi.Util
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.GroupTheory.Nilpotent
+public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
+
+public section
 
 open Group
 open scoped Finset MatrixGroups Pointwise
@@ -21,7 +25,7 @@ lemma fact_4_1 (S T : GL n ℂ) :
 open scoped Classical in
 lemma lemma_4_2 (hC₀ : Fintype.card n < C₀) (K : ℝ) :
     ∃ δ : ℝ,
-      ∀ (A : Finset (GL n ℂ)) (hA : IsApproximateSubgroup K A.toSet) (hC₀ : ∀ a ∈ A, ‖a.val‖ ≤ C₀),
+      ∀ A : Finset (GL n ℂ), IsApproximateSubgroup K (A : Set (GL n ℂ)) → (∀ a ∈ A, ‖a.val‖ ≤ C₀) →
         ∃ γ ∈ A ^ 2, δ * #A ≤ #{x ∈ A ^ 4 | Commute γ x} := sorry
 
 lemma corollary_4_3 (K C₀ : ℝ) :
@@ -30,7 +34,7 @@ lemma corollary_4_3 (K C₀ : ℝ) :
         #F ≤ C ∧ A ⊆ F * Z := sorry
 
 /-- The **Breuillard-Green-Tao theorem**. -/
-theorem theorem_4_4 (_hK : 0 ≤ K) :
+theorem theorem_4_4 :
     ∃ C > 0, ∀ {G} [Group G] [DecidableEq G] (A : Set G) (_hA : IsApproximateSubgroup K A),
       ∃ (H : Subgroup G) (N : Subgroup H) (_hD : N.Normal) (F : Finset G),
         upperCentralSeries (H ⧸ N) C = ⊤ ∧ ((↑) '' (N : Set H) : Set G) ⊆ (A / A) ^ 4 ∧

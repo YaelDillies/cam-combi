@@ -1,5 +1,9 @@
-import Mathlib.Algebra.Order.Group.Pointwise.Interval
-import LeanCamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
+module
+
+public import LeanCamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
+public import Mathlib.Algebra.Order.Group.Pointwise.Interval
+
+public section
 
 open Fin Finset List
 open scoped Pointwise
@@ -10,6 +14,7 @@ variable {G : Type*} [DecidableEq G] [Group G] {A : Finset G} {k K : ℝ} {m : �
 lemma lemma_2_2 (U V W : Finset G) : #U * #(V⁻¹ * W) ≤ #(U * V) * #(U * W) :=
   ruzsa_triangle_inequality_invMul_mul_mul ..
 
+set_option backward.isDefEq.respectTransparency false in
 lemma lemma_2_3_2 (hA : #(A ^ 2) ≤ K * #A) : #(A⁻¹ * A) ≤ K ^ 2 * #A := by
   obtain rfl | hA₀ := A.eq_empty_or_nonempty
   · simp
@@ -20,6 +25,7 @@ lemma lemma_2_3_2 (hA : #(A ^ 2) ≤ K * #A) : #(A⁻¹ * A) ≤ K ^ 2 * #A := b
     _ ≤ (K * #A) * (K * #A) := by rw [← sq A]; gcongr
     _ = #A * (K ^ 2 * #A) := by ring
 
+set_option backward.isDefEq.respectTransparency false in
 lemma lemma_2_3_1 (hA : #(A ^ 2) ≤ K * #A) : #(A * A⁻¹) ≤ K ^ 2 * #A := by
   obtain rfl | hA₀ := A.eq_empty_or_nonempty
   · simp
@@ -40,6 +46,7 @@ lemma lemma_2_4_2 (hm : 3 ≤ m) (hA : #(A ^ 3) ≤ K * #A) (hAsymm : A⁻¹ = A
 
 def def_2_5 (S : Set G) (K : ℝ) : Prop := IsApproximateSubgroup K S
 
+set_option backward.isDefEq.respectTransparency false in
 lemma remark_2_6_1 (k : ℕ) : IsApproximateAddSubgroup 2 (.Icc (-k) k : Set ℤ) where
   zero_mem := by simp
   neg_eq_self := by simp
@@ -51,6 +58,7 @@ lemma remark_2_6_2 {ι : Type*} [Fintype ι] (k : ι → ℕ) :
       (Set.univ.pi fun i ↦ .Icc (-k i) (k i) : Set (ι → ℤ)) := by
   simpa using IsApproximateAddSubgroup.pi fun i ↦ remark_2_6_1 (k i)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma remark_2_6_3 : IsApproximateAddSubgroup 2 (.Icc (-1) 1 : Set ℝ) where
   zero_mem := by simp
   neg_eq_self := by simp

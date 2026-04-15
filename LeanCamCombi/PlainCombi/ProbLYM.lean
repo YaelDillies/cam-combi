@@ -3,15 +3,15 @@ Copyright (c) 2024 Ching-Tsun Chou, Chris Wong. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Ching-Tsun Chou, Chris Wong
 -/
-import LeanCamCombi.Mathlib.Algebra.BigOperators.Field
-import LeanCamCombi.PlainCombi.KatonaCircle
+module
+
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Combinatorics.KatonaCircle
 
 /-!
 # The LYM inequality using probability theory
 
 This file proves the LYM inequality using (very elementary) probability theory.
-
-
 
 ## References
 
@@ -30,12 +30,14 @@ The proof of Theorem 1.10, Lecture 3 in the Cambridge lecture notes on combinato
 is basically the same proof, except without using probability theory.
 -/
 
+public section
+
 open Finset Fintype Numbering
 
 variable {α : Type*} [Fintype α] {𝒜 : Finset (Finset α)}
 
 /-- The **Lubell-Yamamoto-Meshalkin inequality**, proved using the Katona circle method. -/
-theorem LYM_inequality (h𝒜 : IsAntichain (· ⊆ ·) 𝒜.toSet) :
+theorem LYM_inequality (h𝒜 : IsAntichain (· ⊆ ·) (𝒜 : Set (Finset α))) :
     ∑ s ∈ 𝒜, ((card α).choose #s : ℚ≥0)⁻¹ ≤ 1 := by
   classical
   calc

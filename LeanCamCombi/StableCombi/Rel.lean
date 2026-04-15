@@ -1,8 +1,12 @@
-import Mathlib.Algebra.Group.Nat.Defs
+module
+
+public import Mathlib.Algebra.Group.Nat.Defs
 
 /-!
 # Stable binary relations
 -/
+
+@[expose] public section
 
 variable {α β : Type*} {n : ℕ} {r : α → β → Prop}
 

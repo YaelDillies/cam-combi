@@ -3,9 +3,11 @@ Copyright (c) 2022 Yaël Dillies. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies
 -/
-import Mathlib.Data.Finset.Sups
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.UpperLower.Basic
+module
+
+public import Mathlib.Data.Finset.Sups
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Set family certificates
@@ -25,7 +27,9 @@ as probabilistic events, the size of the certificator `𝒜 □ ℬ` corresponds
 * D. Reimer, *Proof of the Van den Berg–Kesten Conjecture*
 -/
 
-open scoped Classical FinsetFamily
+@[expose] public section
+
+open scoped FinsetFamily
 
 variable {α : Type*}
 
@@ -34,8 +38,8 @@ section BooleanAlgebra
 variable [BooleanAlgebra α] (s t u : Finset α) {a : α}
 
 noncomputable def certificator : Finset α :=
-  {a ∈ s ∩ t |
-    ∃ x y, IsCompl x y ∧ (∀ ⦃b⦄, a ⊓ x = b ⊓ x → b ∈ s) ∧ ∀ ⦃b⦄, a ⊓ y = b ⊓ y → b ∈ t}
+  open scoped Classical in
+  {a ∈ s ∩ t | ∃ x y, IsCompl x y ∧ (∀ ⦃b⦄, a ⊓ x = b ⊓ x → b ∈ s) ∧ ∀ ⦃b⦄, a ⊓ y = b ⊓ y → b ∈ t}
 
 scoped[FinsetFamily] infixl:70 " □ " => Finset.certificator
 
@@ -44,12 +48,15 @@ variable {s t u}
 @[simp] lemma mem_certificator :
     a ∈ s □ t ↔
       ∃ x y, IsCompl x y ∧ (∀ ⦃b⦄, a ⊓ x = b ⊓ x → b ∈ s) ∧ ∀ ⦃b⦄, a ⊓ y = b ⊓ y → b ∈ t := by
+  classical
   rw [certificator, mem_filter, and_iff_right_of_imp]
   rintro ⟨u, v, _, hu, hv⟩
   exact mem_inter.2 ⟨hu rfl, hv rfl⟩
 
-lemma certificator_subset_inter : s □ t ⊆ s ∩ t := filter_subset _ _
+lemma certificator_subset_inter [DecidableEq α] : s □ t ⊆ s ∩ t := by
+  unfold certificator; convert filter_subset ..
 
+open scoped Classical in
 lemma certificator_subset_disjSups : s □ t ⊆ s ○ t := by
   simp_rw [subset_iff, mem_certificator, mem_disjSups]
   rintro x ⟨u, v, huv, hu, hv⟩
@@ -62,22 +69,23 @@ variable (s t u)
 lemma certificator_comm : s □ t = t □ s := by
   ext s; rw [mem_certificator, exists_comm]; simp [isCompl_comm, and_comm]
 
-lemma IsUpperSet.certificator_eq_inter (hs : IsUpperSet (s : Set α)) (ht : IsLowerSet (t : Set α)) :
-    s □ t = s ∩ t := by
+lemma IsUpperSet.certificator_eq_inter [DecidableEq α] (hs : IsUpperSet (s : Set α))
+    (ht : IsLowerSet (t : Set α)) : s □ t = s ∩ t := by
   refine
     certificator_subset_inter.antisymm fun a ha ↦ mem_certificator.2 ⟨a, aᶜ, isCompl_compl, ?_⟩
   rw [mem_inter] at ha
   simp only [@eq_comm _ ⊥, ← sdiff_eq, inf_idem, right_eq_inf, _root_.sdiff_self, sdiff_eq_bot_iff]
   exact ⟨fun b hab ↦ hs hab ha.1, fun b hab ↦ ht hab ha.2⟩
 
-lemma IsLowerSet.certificator_eq_inter (hs : IsLowerSet (s : Set α)) (ht : IsUpperSet (t : Set α)) :
-    s □ t = s ∩ t := by
+lemma IsLowerSet.certificator_eq_inter [DecidableEq α] (hs : IsLowerSet (s : Set α))
+    (ht : IsUpperSet (t : Set α)) : s □ t = s ∩ t := by
   refine certificator_subset_inter.antisymm fun a ha ↦
     mem_certificator.2 ⟨aᶜ, a, isCompl_compl.symm, ?_⟩
   rw [mem_inter] at ha
   simp only [@eq_comm _ ⊥, ← sdiff_eq, inf_idem, right_eq_inf, _root_.sdiff_self, sdiff_eq_bot_iff]
   exact ⟨fun b hab ↦ hs hab ha.1, fun b hab ↦ ht hab ha.2⟩
 
+open scoped Classical in
 lemma IsUpperSet.certificator_eq_disjSups (hs : IsUpperSet (s : Set α))
     (ht : IsUpperSet (t : Set α)) : s □ t = s ○ t := by
   refine certificator_subset_disjSups.antisymm fun a ha ↦ mem_certificator.2 ?_

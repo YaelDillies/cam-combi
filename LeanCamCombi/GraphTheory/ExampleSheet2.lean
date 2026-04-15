@@ -3,11 +3,13 @@ Copyright (c) 2022 Yaël Dillies, Kexing Ying. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Kexing Ying
 -/
-import Mathlib.Combinatorics.Hall.Basic
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
-import Mathlib.Combinatorics.SimpleGraph.Clique
-import Mathlib.Data.Real.Sqrt
-import Mathlib.SetTheory.Cardinal.Basic
+module
+
+public import Mathlib.Combinatorics.Hall.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import Mathlib.Data.Real.Sqrt
+public import Mathlib.SetTheory.Cardinal.Basic
 
 /-!
 # Graph Theory, example sheet 2
