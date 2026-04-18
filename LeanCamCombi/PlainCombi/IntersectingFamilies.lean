@@ -69,9 +69,11 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
     clear inter
     obtain rfl | ⟨el, el_in_ℬ⟩ := ℬ.eq_empty_or_nonempty
     · simp only [Finset.card_empty, zero_le]
-    simp [Set.Sized] at sizedℬ
-    have r_le_card_α := card_le_card (subset_univ el)
-    rw [sizedℬ el_in_ℬ, card_univ] at r_le_card_α
+    have r_le_card_α : r ≤ card α := by
+      calc
+        r = #el := by simp [sizedℬ el_in_ℬ]
+        _ ≤ #((univ : Finset α)) := card_le_card (subset_univ el)
+        _ = card α := by simp
     by_cases l_le_r : l ≤ r
     · induction l_le_r using Nat.decreasingInduction with
       | self =>
@@ -88,7 +90,8 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
       | of_succ k k_leq_r ind =>
         have interℬ' : ∀ ⦃a b : Finset α⦄, a ∈ ℬ → b ∈ ℬ → k ≤ #(a ∩ b) := by
           intro a b ha hb
-          exact IsIntersectingFamily.inter_card_ge_of_sized sizedℬ (Nat.le_of_lt k_leq_r) interℬ ha hb
+          exact IsIntersectingFamily.inter_card_ge_of_sized sizedℬ
+            (Nat.le_of_lt k_leq_r) interℬ ha hb
         by_cases inter_succ_k : IsIntersectingFamily (k + 1) (ℬ : Set (Finset α))
         · calc
           _ ≤ (card α - (k + 1)).choose (r - (k + 1)) := ind inter_succ_k
@@ -110,7 +113,7 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
         · obtain ⟨s, _, s_inter_a⟩ := s_eq_inter_all
           have card_map_ℬ_eq_cardℬ : #(image (· \ s) ℬ) = #ℬ := by
             refine card_image_iff.mpr ?_
-            simp [Set.InjOn]
+            rw [Set.InjOn]
             intro x₁ x₁_in_ℬ x₂ x₂_in_ℬ x₁_sub_eq_x₂_sub
             ext a
             by_cases a_in_s : a ∈ s
@@ -121,18 +124,18 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
               rw [a_x_iff_a_in_mp x₁ x₁_in_ℬ, a_x_iff_a_in_mp x₂ x₂_in_ℬ]
               exact Eq.to_iff (congrFun (congrArg Membership.mem x₁_sub_eq_x₂_sub) a)
           have sized_map_ℬ : image (· \ s) ℬ ⊆ powersetCard (r - #s) (univ \ s) := by
-            simp [powersetCard, subset_iff]
-            intro x x_in_ℬ
-            exists ((· \ s) x).1
-            simp only [card_val, exists_prop, and_true]
+            rw [subset_iff]
+            intro y hy
+            rcases mem_image.mp hy with ⟨x, x_in_ℬ, rfl⟩
+            rw [mem_powersetCard]
             constructor
-            · simp only [sdiff_val]
-              refine Multiset.sub_le_sub_right ?_
-              simp
+            · intro a ha
+              exact mem_sdiff.mpr ⟨mem_univ a, (mem_sdiff.mp ha).2⟩
             · rw [card_sdiff, inter_eq_left.mpr (s_inter_a x x_in_ℬ), sizedℬ x_in_ℬ]
           rw [← card_map_ℬ_eq_cardℬ]
           apply le_trans (card_le_card sized_map_ℬ)
-          simp [card_sdiff]
+          simp only [card_powersetCard]
+          rw [card_univ_diff s]
           rw [← (Nat.choose_symm (Nat.sub_le_sub_right r_le_card_α #s))]
           rw [← (Nat.choose_symm (Nat.sub_le_sub_right r_le_card_α k))]
           have : #s ≤ r := by
@@ -143,7 +146,7 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
           rw [α_sub_s_sub_r_sub_s_, α_sub_k_sub_r_sub_k_]
           refine Nat.choose_le_choose (card α - r) ?_
           omega
-        simp at s_eq_inter_all
+        push Not at s_eq_inter_all
         have ⟨A₃, A₃_in_ℬ, A₃_prop⟩ := s_eq_inter_all (A₁ ∩ A₂) k_le_inter
         have inter_lt_k : #((A₁ ∩ A₂) ∩ A₃) < k := by
           by_contra k_le_inter₃
@@ -151,7 +154,8 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
           trivial
         let U := A₁ ∪ A₂ ∪ A₃
         have card_U : #U ≤ 3 * r := by
-          simp [U]
+          dsimp [U]
+          rw [union_assoc]
           calc
             #(A₁ ∪ (A₂ ∪ A₃)) ≤ #A₁ + #(A₂ ∪ A₃) := card_union_le A₁ (A₂ ∪ A₃)
             _ ≤ #A₁ + (#A₂ + #A₃) := by gcongr; exact card_union_le ..
@@ -172,7 +176,8 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
                 apply card_le_card
                 exact inter_subset_inter_left (by simp [U])
           have card_inter_eq_k : #(a ∩ U) = k := by omega
-          simp [U] at card_inter_eq_k
+          dsimp [U] at card_inter_eq_k
+          rw [union_assoc] at card_inter_eq_k
           rw [← union_assoc, union_comm, inter_union_distrib_left, inter_union_distrib_left]
             at card_inter_eq_k
           have _ := calc
@@ -203,40 +208,48 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
             _ = #(a ∩ (A₃ ∪ (A₁ ∩ A₂))) := by rw [inter_union_distrib_left]
             _ ≤ #(a ∩ U) := by
               gcongr
-              simp [U]
-              rw [union_comm, ← union_assoc]
-              apply_rules [inter_subset_inter_left, union_subset_union_left, inter_subset_union]
+              change A₃ ∪ (A₁ ∩ A₂) ⊆ A₁ ∪ A₂ ∪ A₃
+              intro x hx
+              rcases mem_union.mp hx with hx3 | hx12
+              · exact mem_union.mpr <| Or.inr hx3
+              · exact mem_union.mpr <| Or.inl <| mem_union.mpr <| Or.inl <| (mem_inter.mp hx12).1
             _ ≤ k := Nat.le_of_lt_succ a_inter_le_k
           exact (Nat.lt_irrefl _ k_lt_k).elim
         have card_ℬ_leq_prod : #ℬ ≤ #U.powerset * #{p : Finset α | ∃ a ∈ ℬ, a \ U = p} := by
           let fn : Finset α → Finset α → Finset α := fun a b ↦ a ∪ b
-          rw [← ((@card_image₂_iff _ _ _ _ fn U.powerset {p : Finset α | ∃ a ∈ ℬ, a \ U = p}).mpr ?_)]
-          apply card_le_card
-          rw [subset_iff]
-          intro x x_in_ℬ
-          simp [fn]
-          exists x ∩ U
-          simp
-          exists x
-          rw [union_comm, sdiff_union_inter]
-          simp [x_in_ℬ]
-          simp [Set.InjOn, fn]
-          intro a b a_in_U x x_in_ℬ x_minus_U_eq_b a' b' a'_in_U x' x'_in_ℬ x'_minus_U_eq_b cup_eq
-          constructor
-          · have a_cup_b_cap_u_eq_a : (a ∪ b) ∩ U = a := by
-              rw [← x_minus_U_eq_b, inter_comm, inter_union_distrib_left]
-              simpa
-            have a'_cup_b'_cap_u_eq_a' : (a' ∪ b') ∩ U = a' := by
-              rw [← x'_minus_U_eq_b, inter_comm, inter_union_distrib_left]
-              simpa
-            rw [← a_cup_b_cap_u_eq_a, ← a'_cup_b'_cap_u_eq_a', cup_eq]
-          · have a_cup_b_sdiff_u_eq_a : (a ∪ b) \ U = b := by
-              rw [union_sdiff_distrib, ← x_minus_U_eq_b, (sdiff_eq_empty_iff_subset).mpr a_in_U]
-              simp
-            have a'_cup_b'_sdiff_u_eq_a' : (a' ∪ b') \ U = b' := by
-              rw [union_sdiff_distrib, ← x'_minus_U_eq_b, (sdiff_eq_empty_iff_subset).mpr a'_in_U]
-              simp
-            rw [← a_cup_b_sdiff_u_eq_a, ← a'_cup_b'_sdiff_u_eq_a', cup_eq]
+          rw [← ((@card_image₂_iff _ _ _ _ fn U.powerset
+            {p : Finset α | ∃ a ∈ ℬ, a \ U = p}).mpr ?_)]
+          · apply card_le_card
+            rw [subset_iff]
+            intro x x_in_ℬ
+            refine mem_image₂.2 ?_
+            refine ⟨x ∩ U, mem_powerset.mpr inter_subset_right, x \ U, ?_, ?_⟩
+            · simpa using (show ∃ a ∈ ℬ, a \ U = x \ U from ⟨x, x_in_ℬ, rfl⟩)
+            · simpa [fn, union_comm] using (sdiff_union_inter x U)
+          · rw [Set.InjOn]
+            intro y hy z hz hyz
+            rcases y with ⟨a, b⟩
+            rcases z with ⟨a', b'⟩
+            simp only [Set.mem_prod, mem_coe, mem_powerset, mem_filter, mem_univ, true_and] at hy hz
+            rcases hy with ⟨a_in_U, x, x_in_ℬ, x_minus_U_eq_b⟩
+            rcases hz with ⟨a'_in_U, x', x'_in_ℬ, x'_minus_U_eq_b'⟩
+            have cup_eq : a ∪ b = a' ∪ b' := by simpa [fn] using hyz
+            apply Prod.ext
+            · have a_cup_b_cap_u_eq_a : (a ∪ b) ∩ U = a := by
+                rw [← x_minus_U_eq_b, inter_comm, inter_union_distrib_left]
+                simpa
+              have a'_cup_b'_cap_u_eq_a' : (a' ∪ b') ∩ U = a' := by
+                rw [← x'_minus_U_eq_b', inter_comm, inter_union_distrib_left]
+                simpa
+              rw [← a_cup_b_cap_u_eq_a, ← a'_cup_b'_cap_u_eq_a', cup_eq]
+            · have a_cup_b_sdiff_u_eq_a : (a ∪ b) \ U = b := by
+                rw [union_sdiff_distrib, ← x_minus_U_eq_b, (sdiff_eq_empty_iff_subset).mpr a_in_U]
+                simp
+              have a'_cup_b'_sdiff_u_eq_a' : (a' ∪ b') \ U = b' := by
+                rw [union_sdiff_distrib, ← x'_minus_U_eq_b',
+                  (sdiff_eq_empty_iff_subset).mpr a'_in_U]
+                simp
+              rw [← a_cup_b_sdiff_u_eq_a, ← a'_cup_b'_sdiff_u_eq_a', cup_eq]
         have card_filt_le_chooce : #(filter (fun p ↦ ∃ a ∈ ℬ, a \ U = p) univ)
           ≤ (card α - #U).choose (r - (k + 1)) * r := by
           calc
@@ -244,17 +257,26 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
               ≤ #((range (r - k)).biUnion fun n' ↦ powersetCard n' (univ \ U)) := card_le_card ?_
             _ ≤ (card α - #U).choose (r - (k + 1)) * (r - k) := ?_
             _ ≤ (card α - #U).choose (r - (k + 1)) * r := by apply Nat.mul_le_mul_left; omega
-          · simp [subset_iff]
-            intro a a_in_ℬ
-            rw [← sizedℬ a_in_ℬ, ← card_sdiff_add_card_inter a U, Nat.lt_sub_iff_add_lt]
-            apply Nat.add_lt_add_left
-            exact succ_k_le_inter_a_U a a_in_ℬ
+          · rw [subset_iff]
+            intro p hp
+            rcases mem_filter.mp hp with ⟨_, a, a_in_ℬ, rfl⟩
+            refine mem_biUnion.mpr ?_
+            refine ⟨#(a \ U), ?_, ?_⟩
+            · rw [mem_range]
+              rw [← sizedℬ a_in_ℬ, ← card_sdiff_add_card_inter a U, Nat.lt_sub_iff_add_lt]
+              exact Nat.add_lt_add_left (Nat.lt_of_lt_of_le (Nat.lt_succ_self k)
+                (succ_k_le_inter_a_U a a_in_ℬ)) #(a \ U)
+            · rw [mem_powersetCard]
+              constructor
+              · intro x hx
+                exact mem_sdiff.mpr ⟨mem_univ x, (mem_sdiff.mp hx).2⟩
+              · rfl
           · rw [mul_comm]
             nth_rw 2 [← card_range (r - k)]
             apply card_biUnion_le_card_mul
             intro lvl lvl_in_range
             simp only [mem_range] at lvl_in_range
-            simp [card_univ_diff U]
+            rw [card_powersetCard, card_univ_diff U]
             have lvl_lt_r_sub_succ_k : lvl ≤ r - (k + 1) := by omega
             induction lvl_lt_r_sub_succ_k using Nat.decreasingInduction with
             | self => simp
@@ -267,7 +289,8 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
             simp only [card_powerset, le_refl, U]
           _ ≤ 2 ^ #U * ((card α - #U).choose (r - (k + 1)) * r) := by gcongr
           _ ≤ 2 ^ #U * ((card α - k).choose (r - (k + 1)) * r) := by
-            apply_rules [Nat.mul_le_mul_left, Nat.mul_le_mul_right, Nat.choose_mono, Nat.sub_le_sub_left]
+            apply_rules [Nat.mul_le_mul_left, Nat.mul_le_mul_right, Nat.choose_mono,
+              Nat.sub_le_sub_left]
           _ ≤ 2 ^ (3 * r) * ((card α - k).choose (r - (k + 1)) * r) := by gcongr; simp
           _ ≤ (2 ^ (3 * r) * (r * (card α - k).choose (r - (k + 1) + 1) * (r - (k + 1) + 1)) /
             (card α - k - (r - (k + 1)))) := by
