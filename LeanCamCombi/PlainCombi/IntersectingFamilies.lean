@@ -12,59 +12,42 @@ public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Slice
 public import Mathlib.SetTheory.Cardinal.Finite
 
-/-!
-# Upper Bound on `l`-Intersecting Families
-
-## Main Predicate
-
-* `IsIntersectingFamily l 𝒜`: every two distinct elements have intersection of size at
-  least `l`.
-
-## Main statements
-
-* `IsIntersectingFamily.inter_card_ge_of_sized`
-* `IsIntersectingFamily.card_le_of_sized`
--/
-
-@[expose] public section
+public section
 
 open Fintype
+open Finset
 
 variable {α : Type*} [DecidableEq α]
 
-abbrev IsIntersectingFamily (l : ℕ) (𝒜 : Set (Finset α)) : Prop :=
-  (Set.Ici l).IsIntersectingOf 𝒜
+namespace IsIntersectingFamily
 
-/-- Bridge from the pairwise-distinct intersection hypothesis to an all-pairs cardinality bound.
-
-If every set in `𝒜` has size `r`, `k ≤ r`, and `𝒜` is `k`-intersecting in the sense
-`IsIntersectingFamily k 𝒜`, then for any `a, b ∈ 𝒜` we have `k ≤ (a ∩ b).card`.
+/-- If every set in `𝒜` has size `r`, `k ≤ r`, and `𝒜` is `k`-intersecting,
+then for any `A, B ∈ 𝒜` we have `k ≤ #(A ∩ B)`.
 -/
-theorem IsIntersectingFamily.inter_card_ge_of_sized {k r : ℕ} {𝒜 : Set (Finset α)}
-    (sized : 𝒜.Sized r) (k_le_r : k ≤ r) (inter : IsIntersectingFamily k 𝒜)
-    {a b : Finset α} (ha : a ∈ 𝒜) (hb : b ∈ 𝒜) : k ≤ (a ∩ b).card := by
-  rcases eq_or_ne a b with rfl | hab
-  · simpa [sized ha] using k_le_r
-  · exact inter ha hb hab
+theorem le_card_inter_of_sized {k r : ℕ} {𝒜 : Set (Finset α)}
+    (sized : 𝒜.Sized r) (k_le_r : k ≤ r) (inter : (Set.Ici k).IsIntersectingOf 𝒜)
+    {A B : Finset α} (hA : A ∈ 𝒜) (hB : B ∈ 𝒜) : k ≤ #(A ∩ B) := by
+  rcases eq_or_ne A B with rfl | hab
+  · simpa [sized hA] using k_le_r
+  · exact inter hA hB hab
 
 variable [Fintype α]
 
-open Finset in
 /-- Upper bound for large finite universes.
 
 Let `𝒜` be a family of `r`-subsets of a finite type `α`. If `𝒜` is `l`-intersecting in the sense
 `IsIntersectingFamily l 𝒜` and `card α` is large enough, then
 `Nat.card 𝒜 ≤ ((card α) - l).choose (r - l)`.
 -/
-theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α)}
-  (sized𝒜 : Set.Sized r 𝒜) (inter : IsIntersectingFamily l 𝒜)
+theorem card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α)}
+  (sized𝒜 : Set.Sized r 𝒜) (inter : (Set.Ici l).IsIntersectingOf 𝒜)
   (n_much_bigger_r : 2 ^ (3 * r) * r * r + 5 * r ≤ card α) :
   Nat.card 𝒜 ≤ ((card α) - l).choose (r - l) := by
     lift 𝒜 to Finset (Finset α) using 𝒜.toFinite with ℬ hℬ
     have hcard : Nat.card (↑↑ℬ : Set (Finset α)) = #ℬ := by simp
     rw [hcard]
     have sizedℬ : Set.Sized r (ℬ : Set (Finset α)) := by simpa [hℬ] using sized𝒜
-    have interℬ : IsIntersectingFamily l (ℬ : Set (Finset α)) := by
+    have interℬ : (Set.Ici l).IsIntersectingOf (ℬ : Set (Finset α)) := by
       simpa [hℬ] using inter
     clear inter
     obtain rfl | ⟨el, el_in_ℬ⟩ := ℬ.eq_empty_or_nonempty
@@ -78,21 +61,21 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
     · induction l_le_r using Nat.decreasingInduction with
       | self =>
         simp only [tsub_self, Nat.choose_zero_right, Finset.card_le_one_iff]
-        intro a b a_in_ℬ b_in_ℬ
-        suffices a_cap_b_eq_a : a ∩ b = a from by
-          apply eq_of_subset_of_card_le (inter_eq_left.mp a_cap_b_eq_a)
-          simp [sizedℬ a_in_ℬ, sizedℬ b_in_ℬ]
+        intro A B A_in_ℬ B_in_ℬ
+        suffices A_cap_B_eq_A : A ∩ B = A from by
+          apply eq_of_subset_of_card_le (inter_eq_left.mp A_cap_B_eq_A)
+          simp [sizedℬ A_in_ℬ, sizedℬ B_in_ℬ]
         apply eq_of_subset_of_card_le inter_subset_left
         calc
-          #a = r := by simp [sizedℬ a_in_ℬ]
-          _ ≤ #(a ∩ b) := by
-            exact IsIntersectingFamily.inter_card_ge_of_sized sizedℬ le_rfl interℬ a_in_ℬ b_in_ℬ
+          #A = r := by simp [sizedℬ A_in_ℬ]
+          _ ≤ #(A ∩ B) := by
+            exact le_card_inter_of_sized sizedℬ le_rfl interℬ A_in_ℬ B_in_ℬ
       | of_succ k k_leq_r ind =>
-        have interℬ' : ∀ ⦃a b : Finset α⦄, a ∈ ℬ → b ∈ ℬ → k ≤ #(a ∩ b) := by
-          intro a b ha hb
-          exact IsIntersectingFamily.inter_card_ge_of_sized sizedℬ
-            (Nat.le_of_lt k_leq_r) interℬ ha hb
-        by_cases inter_succ_k : IsIntersectingFamily (k + 1) (ℬ : Set (Finset α))
+        have interℬ' : ∀ ⦃A B : Finset α⦄, A ∈ ℬ → B ∈ ℬ → k ≤ #(A ∩ B) := by
+          intro A B hA hB
+          exact le_card_inter_of_sized sizedℬ
+            (Nat.le_of_lt k_leq_r) interℬ hA hB
+        by_cases inter_succ_k : (Set.Ici (k + 1)).IsIntersectingOf (ℬ : Set (Finset α))
         · calc
           _ ≤ (card α - (k + 1)).choose (r - (k + 1)) := ind inter_succ_k
           _ = (card α - (k + 1)).choose (card α - (k + 1) - (r - (k + 1))) := by
@@ -104,12 +87,12 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
             rw [Nat.choose_symm]; omega
           _ = (card α - k).choose (r - k) := by congr 1; omega
         have inter_succ_k' : ∃ A₁ ∈ ℬ, ∃ A₂ ∈ ℬ, A₁ ≠ A₂ ∧ #(A₁ ∩ A₂) ≤ k := by
-          simpa [IsIntersectingFamily, Set.IsIntersectingOf, Set.Pairwise, Set.mem_Ici,
+          simpa [Set.IsIntersectingOf, Set.Pairwise, Set.mem_Ici,
             Nat.succ_le_iff, not_forall, Classical.not_imp] using inter_succ_k
         obtain ⟨A₁, A₁_in_ℬ, A₂, A₂_in_ℬ, card_x₁_x₂⟩ := inter_succ_k'
         have k_le_inter := interℬ' A₁_in_ℬ A₂_in_ℬ
         have inter_eq_k : #(A₁ ∩ A₂) = k := Eq.symm (Nat.le_antisymm k_le_inter card_x₁_x₂.2)
-        by_cases s_eq_inter_all : ∃ s, k ≤ #s ∧ ∀ a ∈ ℬ, s ⊆ a
+        by_cases s_eq_inter_all : ∃ s, k ≤ #s ∧ ∀ A ∈ ℬ, s ⊆ A
         · obtain ⟨s, _, s_inter_a⟩ := s_eq_inter_all
           have mem_univ_sdiff_of_mem_sdiff {x : α} {t : Finset α} (hx : x ∈ t \ s) :
               x ∈ univ \ s := by
@@ -352,3 +335,5 @@ theorem IsIntersectingFamily.card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α
         _ ≤ ((card α) - l).choose (r - l) := by
           have r_lt_l : r < l := Nat.lt_of_not_ge l_le_r
           simp [Nat.sub_eq_zero_of_le (Nat.le_of_lt r_lt_l)]
+
+end IsIntersectingFamily
