@@ -12,6 +12,24 @@ public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Slice
 public import Mathlib.SetTheory.Cardinal.Finite
 
+/-!
+# Upper bound on `l`-intersecting families
+
+This file proves an upper bound on `l`-intersecting families.
+
+A family of sets is called `l`-intersecting if the size of the intersection of
+any two sets in the family is at least `l`.
+
+## Main results
+
+* `IsIntersectingFamily.card_le_of_sized`: If `𝒜` is a family of `r`-subsets of a finite type
+  `α`, and `𝒜` is `l`-intersecting, then `Nat.card 𝒜 ≤ ((card α) - l).choose (r - l)`.
+
+## References
+
+* Theorem 1.17 in the [lecture note](https://github.com/YaelDillies/maths-notes/blob/master/combinatorics.pdf)
+-/
+
 public section
 
 open Fintype
@@ -21,8 +39,9 @@ variable {α : Type*} [DecidableEq α]
 
 namespace IsIntersectingFamily
 
-/-- If every set in `𝒜` has size `r`, `k ≤ r`, and `𝒜` is `k`-intersecting,
-then for any `A, B ∈ 𝒜` we have `k ≤ #(A ∩ B)`.
+/--
+If `𝒜` is a `k`-intersecting family of sets, and every set in `𝒜` has size `r`,
+for `r ≥ k`, then for any `A, B ∈ 𝒜`, we have `k ≤ #(A ∩ B)`.
 -/
 theorem le_card_inter_of_sized {k r : ℕ} {𝒜 : Set (Finset α)}
     (sized : 𝒜.Sized r) (k_le_r : k ≤ r) (inter : (Set.Ici k).IsIntersectingOf 𝒜)
@@ -33,15 +52,15 @@ theorem le_card_inter_of_sized {k r : ℕ} {𝒜 : Set (Finset α)}
 
 variable [Fintype α]
 
-/-- Upper bound for large finite universes.
+/-- Upper bound for `l`-intersecting families
 
-Let `𝒜` be a family of `r`-subsets of a finite type `α`. If `𝒜` is `l`-intersecting in the sense
-`IsIntersectingFamily l 𝒜` and `card α` is large enough, then
-`Nat.card 𝒜 ≤ ((card α) - l).choose (r - l)`.
+Let `α` be finite and `𝒜` a family of `r`-element subsets of `α`.
+If `𝒜` is `l`-intersecting and `card α` is sufficiently large,
+then `Nat.card 𝒜 ≤ ((card α) - l).choose (r - l)`.
 -/
 theorem card_le_of_sized {l r : ℕ} {𝒜 : Set (Finset α)}
     (sized𝒜 : Set.Sized r 𝒜) (inter : (Set.Ici l).IsIntersectingOf 𝒜)
-    (n_much_bigger_r : 2 ^ (3 * r) * r * r + 5 * r ≤ card α) :
+    (h_card_alpha_large : 2 ^ (3 * r) * r * r + 5 * r ≤ card α) :
   Nat.card 𝒜 ≤ ((card α) - l).choose (r - l) := by
   lift 𝒜 to Finset (Finset α) using 𝒜.toFinite
   let ℬ : Finset (Finset α) := 𝒜
