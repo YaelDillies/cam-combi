@@ -28,15 +28,15 @@ Our project is backed by [mathlib](https://leanprover-community.github.io), the 
 
 ## Content
 
-The Lean code is located within the `LeanCamCombi` folder. Within it, one can find:
+The Lean code is located within the `CamCombi` folder. Within it, one can find:
 * One subfolder for each course, containing **formal lecture transcripts** in the files named `Lecture1`, `Lecture2`, etc... and **formal example sheet translations** in the files named `ExampleSheet1`, `ExampleSheet2`, etc... We follow the mathlib philosophy of aiming for the most general result within reach. This means that not all proofs follow the lecture notes, and might instead derive a result proved in the lectures from a general theorem. Those general theorems and prerequisite lemmas are proved in other folders. Read below.
-* A `Mathlib` subfolder for the **prerequisites** to be upstreamed to mathlib. Lemmas that belong in an existing mathlib file `Mathlib.X` will be located in `LeanCamCombi.Mathlib.X`. We aim to preserve the property that `LeanCamCombi.Mathlib.X` only imports `Mathlib.X` and files of the form `LeanCamCombi.Mathlib.Y` where `Mathlib.X` (transitively) imports `Mathlib.Y`. Prerequisites that do not belong in any existing mathlib file are placed in subtheory folders. See below.
+* A `Mathlib` subfolder for the **prerequisites** to be upstreamed to mathlib. Lemmas that belong in an existing mathlib file `Mathlib.X` will be located in `CamCombi.Mathlib.X`. We aim to preserve the property that `CamCombi.Mathlib.X` only imports `Mathlib.X` and files of the form `CamCombi.Mathlib.Y` where `Mathlib.X` (transitively) imports `Mathlib.Y`. Prerequisites that do not belong in any existing mathlib file are placed in subtheory folders. See below.
 * One folder for each **theory development**. The formal lecture transcripts only contain what was stated in the lectures, but sometimes it makes sense for a theory to be developed as a whole before being incorporated by the prerequisites or imported in the formal lecture transcripts.
-* An `Archive` subfolder for **archived results**. It sometimes happens in mathlib that a long argument gets replaced by a shorter one, with a different proof. When the long argument was proved in a lecture, we salvage it to `LeanCamCombi` for conservation purposes.
+* An `Archive` subfolder for **archived results**. It sometimes happens in mathlib that a long argument gets replaced by a shorter one, with a different proof. When the long argument was proved in a lecture, we salvage it to `CamCombi` for conservation purposes.
 
 ### Content under development
 
-The following topics are under active development in LeanCamCombi.
+The following topics are under active development in CamCombi.
 
 * The Erdős-Rényi model for random graphs, aka binomial random graph
 * The Littlewood-Offord problem
@@ -48,7 +48,7 @@ See the [upstreaming dashboard](https://yaeldillies.github.io/cam-combi/upstream
 
 ### Current content
 
-The following topics are covered in LeanCamCombi and could be upstreamed to Mathlib.
+The following topics are covered in CamCombi and could be upstreamed to Mathlib.
 
 * Kneser's addition theorem
 * The Sylvester-Chvatal theorem
@@ -61,7 +61,7 @@ The following topics are archived because they are already covered by mathlib, b
 
 ### Past content
 
-The following topics have been upstreamed to mathlib and no longer live in LeanCamCombi.
+The following topics have been upstreamed to mathlib and no longer live in CamCombi.
 
 * The Ahlswede-Zhang inequality
 * The four functions theorem and related discrete correlation inequalities: FKG inequality, Holley inequality, Daykin inequality, Marica-Schönheim inequality
@@ -84,4 +84,4 @@ In either case, run `lake exe cache get` and then `lake build` to build the proj
 
 **This project is open to contribution**. You are in fact encouraged to have a look at the example sheet translations and try your hand at one of the problems. If you manage to prove one of them, please open a PR!
 
-If you want to contribute a theorem or theory development, please open a PR! Note however that the standard of code is pretty high and that is not because you have formalised a concept/proved a theorem that it can be included into LeanCamCombi as is. Nonetheless I am willing to review your code and put it in shape for incorporation.
+If you want to contribute a theorem or theory development, please open a PR! Note however that the standard of code is pretty high and that is not because you have formalised a concept/proved a theorem that it can be included into CamCombi as is. Nonetheless I am willing to review your code and put it in shape for incorporation.

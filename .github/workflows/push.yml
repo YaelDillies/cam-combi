@@ -26,11 +26,11 @@ jobs:
       - name: Don't 'import Mathlib', use precise imports
         if: always()
         run: |
-          ! (find LeanCamCombi -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import Mathlib$')
+          ! (find CamCombi -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import Mathlib$')
 
-      - name: Files in LeanCamCombi.Mathlib can't import LeanCamCombi files outside LeanCamCombi.Mathlib
+      - name: Files in CamCombi.Mathlib can't import CamCombi files outside CamCombi.Mathlib
         run: |
-          ! (find LeanCamCombi/Mathlib -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import LeanCamCombi.(?!Mathlib)')
+          ! (find CamCombi/Mathlib -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import CamCombi.(?!Mathlib)')
 
   build:
     name: Build project
@@ -54,7 +54,7 @@ jobs:
         uses: leanprover-community/upstreaming-dashboard-action@main
         with:
           website-directory: ./website
-          project-name: LeanCamCombi
+          project-name: CamCombi
           include-drafts: true
           branch-name: master
 

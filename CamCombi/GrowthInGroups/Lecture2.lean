@@ -1,6 +1,6 @@
 module
 
-public import LeanCamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
+public import CamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
 public import Mathlib.Algebra.Order.Group.Pointwise.Interval
 
 public section

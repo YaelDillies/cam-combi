@@ -1,10 +1,10 @@
 # Upstreaming dashboard
 
-The eventual goal of the LeanCamCombi project is to not contain any significant new formalisation, but instead to act as a shallow layer over [Mathlib](https://github.com/leanprover-community/mathlib4) showing concretely how to turn paper-combinatorics into Lean-combinatorics.
+The eventual goal of the CamCombi project is to not contain any significant new formalisation, but instead to act as a shallow layer over [Mathlib](https://github.com/leanprover-community/mathlib4) showing concretely how to turn paper-combinatorics into Lean-combinatorics.
 
-As such, it is crucial to continuously organise upstreaming from LeanCamCombi to Mathlib.
+As such, it is crucial to continuously organise upstreaming from CamCombi to Mathlib.
 The way we organise this is with the following two lists,
-showing files with no LeanCamCombi dependencies depending on whether they contain `sorry` or not.
+showing files with no CamCombi dependencies depending on whether they contain `sorry` or not.
 
 {% include _upstreaming_dashboard/ready_to_upstream_snippet.md %}
 

@@ -5,7 +5,7 @@ Authors: Yaël Dillies
 -/
 module
 
-public import LeanCamCombi.Mathlib.Combinatorics.SimpleGraph.Density
+public import CamCombi.Mathlib.Combinatorics.SimpleGraph.Density
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability

@@ -5,7 +5,7 @@ Authors: Yaël Dillies
 -/
 module
 
-public import LeanCamCombi.Util
+public import CamCombi.Util
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Combinatorics.Additive.DoublingConst
 public import Mathlib.Combinatorics.Additive.VerySmallDoubling

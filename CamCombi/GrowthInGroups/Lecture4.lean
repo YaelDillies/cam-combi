@@ -1,7 +1,7 @@
 module
 
-public import LeanCamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
-public import LeanCamCombi.Util
+public import CamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
+public import CamCombi.Util
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs

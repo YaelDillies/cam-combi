@@ -1,6 +1,6 @@
 module
 
-public import LeanCamCombi.StableCombi.Rel
+public import CamCombi.StableCombi.Rel
 public import Mathlib.Data.Set.Defs
 
 @[expose] public section
