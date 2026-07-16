@@ -21,6 +21,7 @@ namespace Finset
 variable {ι E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {𝒜 : Finset (Finset ι)}
   {s : Finset ι} {f : ι → E} {r : ℝ}
 
+set_option backward.isDefEq.respectTransparency false in
 lemma exists_littlewood_offord_partition [DecidableEq ι] (hr : 0 < r) (hf : ∀ i ∈ s, r ≤ ‖f i‖) :
     ∃ P : Finpartition s.powerset,
       #P.parts = (#s).choose (#s / 2) ∧ (∀ 𝒜 ∈ P.parts, ∀ t ∈ 𝒜, t ⊆ s) ∧ ∀ 𝒜 ∈ P.parts,
