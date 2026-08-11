@@ -56,9 +56,24 @@ Show that every graph $$G$$, with $$|G| > 2$$, has two vertices of the same degr
 -/
 
 -- Planarity is hard
-lemma q3 [Fintype α] (G : SimpleGraph α) [DecidableRel G.Adj] :
-    ∃ a b, a ≠ b ∧ G.degree a = G.degree b :=
-  sorry
+lemma q3 [Fintype α] [Nontrivial α] (G : SimpleGraph α) [DecidableRel G.Adj] :
+    ∃ a b, a ≠ b ∧ G.degree a = G.degree b := by
+  suffices ¬Injective (fun v ↦ G.degree v) by
+    obtain ⟨a, b, hab, hne⟩ :=
+      (Function.not_injective_iff (f := fun v ↦ G.degree v)).mp this
+    exact ⟨a, b, hne, hab⟩
+  intro hdegree
+  let degreeFin : α → Fin (card α) := fun v ↦ ⟨G.degree v, G.degree_lt_card_verts v⟩
+  have hdegreeFin : Injective degreeFin := fun _ _ h ↦ hdegree <| congrArg Fin.val h
+  have hdegreeFin_bijective : Bijective degreeFin :=
+    (Fintype.bijective_iff_injective_and_card degreeFin).2 ⟨hdegreeFin, by simp⟩
+  obtain ⟨a, ha⟩ := hdegreeFin_bijective.surjective ⟨0, Fintype.card_pos⟩
+  obtain ⟨b, hb⟩ := hdegreeFin_bijective.surjective
+    ⟨card α - 1, Nat.sub_lt Fintype.card_pos (by simp)⟩
+  have ha_isolated : G.IsIsolated a := (G.degree_eq_zero a).mp <| congrArg Fin.val ha
+  have hb_universal : G.IsUniversal b :=
+    (G.degree_eq_card_sub_one b).mp <| congrArg Fin.val hb
+  exact hb_universal.not_isIsolated a ha_isolated
 
 /-!
 ### Question 4
