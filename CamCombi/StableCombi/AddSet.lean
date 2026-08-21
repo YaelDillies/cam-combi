@@ -1,6 +1,7 @@
 module
 
 public import CamCombi.StableCombi.Rel
+public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Data.Set.Defs
 
 @[expose] public section
