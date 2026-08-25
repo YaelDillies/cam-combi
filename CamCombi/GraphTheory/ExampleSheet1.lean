@@ -48,6 +48,7 @@ Show there are infinitely many planar graphs for which $$e(G) = 3(|G| − 2)$$. 
 description of all graphs that satisfy this equality?
 -/
 
+-- Planarity is hard
 
 /-!
 ### Question 3
@@ -55,7 +56,6 @@ description of all graphs that satisfy this equality?
 Show that every graph $$G$$, with $$|G| > 2$$, has two vertices of the same degree.
 -/
 
--- Planarity is hard
 lemma q3 [Fintype α] (G : SimpleGraph α) [DecidableRel G.Adj] :
     ∃ a b, a ≠ b ∧ G.degree a = G.degree b :=
   sorry
