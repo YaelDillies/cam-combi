@@ -3,6 +3,8 @@ module
 public import CamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
 public import Mathlib.Algebra.Order.Group.Pointwise.Interval
 
+import Mathlib.Combinatorics.Additive.RuzsaCovering
+
 public section
 
 open Fin Finset List

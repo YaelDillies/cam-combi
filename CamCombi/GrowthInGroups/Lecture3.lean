@@ -3,6 +3,8 @@ module
 public import CamCombi.Mathlib.Combinatorics.Additive.ApproximateSubgroup
 public import Mathlib.Geometry.Group.Growth.QuotientInter
 
+import Mathlib.Combinatorics.Additive.RuzsaCovering
+
 public section
 
 open Finset
