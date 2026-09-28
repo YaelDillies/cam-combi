@@ -3,6 +3,8 @@ module
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Combinatorics.Additive.ApproximateSubgroup
 
+import Mathlib.Algebra.Group.Action.Pointwise.Finset
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.Bound
 
 @[expose] public section
