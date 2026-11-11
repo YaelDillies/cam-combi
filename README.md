@@ -24,7 +24,7 @@ The definitions, theorems and proofs in this repository are (mostly) taken from 
 
 The formal system which we are using as a target is [Lean 4](https://lean-lang.org). Lean is a dependently typed theorem prover and programming language based on the Calculus of Inductive Constructions. It is being developed at the [Lean Focused Research Organization](https://lean-fro.org) by Leonardo de Moura and his team.
 
-Our project is backed by [mathlib](https://leanprover-community.github.io), the major classical maths library written in Lean 4.
+Our project is backed by [mathlib](https://leanprover-community.github.io), the major classical maths library written in Lean 4, and by [AddCombi](https://github.com/leanprover-community/add-combi), the Lean library of additive combinatorics.
 
 ## Content
 

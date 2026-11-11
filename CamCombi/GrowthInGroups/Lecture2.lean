@@ -58,7 +58,7 @@ lemma remark_2_6_1 (k : ℕ) : IsApproximateAddSubgroup 2 (.Icc (-k) k : Set ℤ
 lemma remark_2_6_2 {ι : Type*} [Fintype ι] (k : ι → ℕ) :
     IsApproximateAddSubgroup (2 ^ Fintype.card ι)
       (Set.univ.pi fun i ↦ .Icc (-k i) (k i) : Set (ι → ℤ)) := by
-  simpa using IsApproximateAddSubgroup.pi fun i ↦ remark_2_6_1 (k i)
+  simpa using IsApproximateAddSubgroup.pi (s := .univ) fun i _ ↦ remark_2_6_1 (k i)
 
 set_option backward.isDefEq.respectTransparency false in
 lemma remark_2_6_3 : IsApproximateAddSubgroup 2 (.Icc (-1) 1 : Set ℝ) where
